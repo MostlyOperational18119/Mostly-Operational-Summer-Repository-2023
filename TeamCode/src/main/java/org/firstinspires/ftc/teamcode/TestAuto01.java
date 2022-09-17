@@ -31,12 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -52,8 +49,10 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TestDrive01", group="Linear Opmode")
-public class TestDrive01 extends LinearOpMode {
+
+
+@TeleOp(name="TestAuto01", group="Linear Opmode")
+public class TestAuto01 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -61,12 +60,65 @@ public class TestDrive01 extends LinearOpMode {
     private DcMotor motor02;
     private DcMotor motor03;
     private DcMotor motor04;
-    private Servo servo01;
+
+    double rotationsPerMeter = 3.3;
+    double encoders = 537.6;
 
     private double oldMotor01Power;
     private double oldMotor02Power;
     private double oldMotor03Power;
     private double oldMotor04Power;
+
+
+    /*
+    public void driveForTime(int seconds, double power) {
+        motor01.setPower(power);
+        motor02.setPower(power);
+        motor03.setPower(power);
+        motor04.setPower(power);
+        sleep(seconds * 1000);
+        motor01.setPower(0);
+        motor02.setPower(0);
+        motor03.setPower(0);
+        motor04.setPower(0);
+    }
+    */
+    public void driveForDistance(double distanceMeters, double power) {
+        motor01.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor02.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor03.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor04.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        double distanceTraveled = 0;
+        int targetPos = (int) (distanceMeters * encoders * rotationsPerMeter);
+        motor01.setTargetPosition((targetPos));
+        motor02.setTargetPosition((targetPos));
+        motor03.setTargetPosition((targetPos));
+        motor04.setTargetPosition((targetPos));
+
+
+        motor01.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor02.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor03.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor04.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        motor01.setPower(power);
+        motor02.setPower(power);
+        motor03.setPower(power);
+        motor04.setPower(power);
+        targetPos = motor01.getTargetPosition();
+        int currentPos = motor01.getCurrentPosition();
+        boolean hasNotReachedTarget = true;
+        while (hasNotReachedTarget) {
+            if(currentPos == targetPos){
+                hasNotReachedTarget = false;
+                motor01.setPower(0);
+                motor02.setPower(0);
+                motor03.setPower(0);
+                motor04.setPower(0);
+            }
+        }
+    }
 
     @Override
     public void runOpMode() {
@@ -77,11 +129,10 @@ public class TestDrive01 extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         // Yay! Git. :)
-        motor01  = hardwareMap.get(DcMotor.class, "motor1");
+        motor01 = hardwareMap.get(DcMotor.class, "motor1");
         motor02 = hardwareMap.get(DcMotor.class, "motor2");
         motor03 = hardwareMap.get(DcMotor.class, "motor3");
         motor04 = hardwareMap.get(DcMotor.class, "motor4");
-        servo01 = hardwareMap.get(Servo.class,"servo1");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
