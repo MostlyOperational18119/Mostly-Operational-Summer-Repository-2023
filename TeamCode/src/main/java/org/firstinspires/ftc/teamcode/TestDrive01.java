@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -74,6 +74,7 @@ public class TestDrive01 extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
+        // Yay! Git. :)
         motor01  = hardwareMap.get(DcMotor.class, "motor1");
         motor02 = hardwareMap.get(DcMotor.class, "motor2");
         motor03 = hardwareMap.get(DcMotor.class, "motor3");
