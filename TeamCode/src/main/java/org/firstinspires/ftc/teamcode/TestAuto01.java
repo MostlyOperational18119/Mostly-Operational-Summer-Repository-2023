@@ -29,12 +29,50 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.UserHandle;
+import android.view.Display;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 
 /**
@@ -51,24 +89,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 
-@Disabled
 @TeleOp(name="TestAuto01", group="Linear Opmode")
 public class TestAuto01 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor motor01;
-    private DcMotor motor02;
-    private DcMotor motor03;
-    private DcMotor motor04;
 
     double rotationsPerMeter = 3.3;
     double encoders = 537.6;
 
-    private double oldMotor01Power;
-    private double oldMotor02Power;
-    private double oldMotor03Power;
-    private double oldMotor04Power;
 
 
     /*
@@ -84,64 +113,16 @@ public class TestAuto01 extends LinearOpMode {
         motor04.setPower(0);
     }
     */
-    public void driveForDistance(double distanceMeters, double power) {
-        motor01.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor02.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor03.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor04.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        double distanceTraveled = 0;
-        int targetPos = (int) (distanceMeters * encoders * rotationsPerMeter);
-        motor01.setTargetPosition((targetPos));
-        motor02.setTargetPosition((targetPos));
-        motor03.setTargetPosition((targetPos));
-        motor04.setTargetPosition((targetPos));
 
-
-        motor01.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor02.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor03.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor04.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        motor01.setPower(power);
-        motor02.setPower(power);
-        motor03.setPower(power);
-        motor04.setPower(power);
-        targetPos = motor01.getTargetPosition();
-        int currentPos = motor01.getCurrentPosition();
-        boolean hasNotReachedTarget = true;
-        while (hasNotReachedTarget) {
-            if(currentPos == targetPos){
-                hasNotReachedTarget = false;
-                motor01.setPower(0);
-                motor02.setPower(0);
-                motor03.setPower(0);
-                motor04.setPower(0);
-            }
-        }
-    }
 
     @Override
     public void runOpMode() {
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        // Yay! Git. :)
-        motor01 = hardwareMap.get(DcMotor.class, "motor1");
-        motor02 = hardwareMap.get(DcMotor.class, "motor2");
-        motor03 = hardwareMap.get(DcMotor.class, "motor3");
-        motor04 = hardwareMap.get(DcMotor.class, "motor4");
 
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        motor01.setDirection(DcMotor.Direction.REVERSE);
-        //motor02.setDirection(DcMotor.Direction.FORWARD);
-        motor03.setDirection(DcMotor.Direction.REVERSE);
-        //motor04.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -149,40 +130,11 @@ public class TestAuto01 extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double lefty = -gamepad1.left_stick_y;
-            double leftx = gamepad1.left_stick_x;
-            double righty = -gamepad1.right_stick_y;
-            double rightx = gamepad1.right_stick_x;
-            //servo01.setDirection();
+            // Make the robot spin :)
+            drive.turn(180 + (Math.sin(runtime.milliseconds()) * 180));
 
-            //if (lefty > rightx) {
-            if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
-                motor01.setPower(lefty - leftx);
-                motor02.setPower(lefty + leftx);
-                motor03.setPower(lefty + leftx);
-                motor04.setPower(lefty - leftx);
-                //} if (lefty < rightx) {
-                motor01.setPower(rightx);
-                motor02.setPower(-rightx);
-                motor03.setPower(rightx);
-                motor04.setPower(-rightx);
-                oldMotor01Power = motor01.getPower();
-                oldMotor02Power = motor02.getPower();
-                oldMotor03Power = motor03.getPower();
-                oldMotor04Power = motor04.getPower();
-            }
-            if (gamepad1.right_bumper || gamepad1.left_bumper) {
-                motor01.setPower(-oldMotor01Power);
-                motor02.setPower(-oldMotor02Power);
-                motor03.setPower(-oldMotor03Power);
-                motor04.setPower(-oldMotor04Power);
-                sleep(100);
-                motor01.setPower(0);
-                motor02.setPower(0);
-                motor03.setPower(0);
-                motor04.setPower(0);
-            }
-            //}
+            // Patiently wait for the Bobot to finish it's trip to spin
+            drive.waitForIdle();
         }
     }
 }
