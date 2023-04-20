@@ -57,7 +57,9 @@ import android.view.Display;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -74,6 +76,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 
 /**
@@ -94,7 +97,7 @@ import java.io.InputStream;
 public class TestAuto01 extends LinearOpMode {
 
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
+//    private ElapsedTime runtime = new ElapsedTime();
 
     double rotationsPerMeter = 3.3;
     double encoders = 537.6;
@@ -118,24 +121,27 @@ public class TestAuto01 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        // Setup Odometry :)
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        // Setup up the trajectory (drive path)
+        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d(0 ,0, Math.toRadians(0)))
+                .strafeRight(10)
+                .forward(5)
+                .build();
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
 
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
-            // Make the robot spin :)
-            drive.turn(180 + (Math.sin(runtime.milliseconds()) * 180));
+        if(isStopRequested()) return;
 
-            // Patiently wait for the Bobot to finish it's trip to spin
-            drive.waitForIdle();
-        }
+        drive.followTrajectory(myTrajectory);
+
+        Pose2d pose = drive.getPoseEstimate();
+
+        telemetry.addData("Current Position", String.format(Locale.ENGLISH, "X: %f, Y: %f, and Rotation: %f", pose.getX(), pose.getY(),pose.getHeading()));
     }
 }
