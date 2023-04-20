@@ -143,5 +143,6 @@ public class TestAuto01 extends LinearOpMode {
         Pose2d pose = drive.getPoseEstimate();
 
         telemetry.addData("Current Position", String.format(Locale.ENGLISH, "X: %f, Y: %f, and Rotation: %f", pose.getX(), pose.getY(),pose.getHeading()));
+        telemetry.update();
     }
 }
