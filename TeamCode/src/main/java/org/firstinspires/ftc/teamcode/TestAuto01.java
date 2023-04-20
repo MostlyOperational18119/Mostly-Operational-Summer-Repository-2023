@@ -95,40 +95,18 @@ import java.util.Locale;
 
 @TeleOp(name="TestAuto01", group="Linear Opmode")
 public class TestAuto01 extends LinearOpMode {
-
-    // Declare OpMode members.
-//    private ElapsedTime runtime = new ElapsedTime();
-
-    double rotationsPerMeter = 3.3;
-    double encoders = 537.6;
-
-
-
-    /*
-    public void driveForTime(int seconds, double power) {
-        motor01.setPower(power);
-        motor02.setPower(power);
-        motor03.setPower(power);
-        motor04.setPower(power);
-        sleep(seconds * 1000);
-        motor01.setPower(0);
-        motor02.setPower(0);
-        motor03.setPower(0);
-        motor04.setPower(0);
-    }
-    */
-
-
     @Override
     public void runOpMode() {
         // Setup Odometry :)
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
         // Setup up the trajectory (drive path)
         Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d(0 ,0, Math.toRadians(0)))
                 .strafeRight(10)
                 .forward(5)
                 .build();
 
+        // Tell the User the Robot has been initialized
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
