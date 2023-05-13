@@ -33,10 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -57,11 +55,12 @@ public class TestDrive01 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor motor01;
-    private DcMotor motor02;
-    private DcMotor motor03;
-    private DcMotor motor04;
+    private DcMotor motorFL;
+    private DcMotor motorFR;
+    private DcMotor motorBL;
+    private DcMotor motorBR;
     private Servo servo01;
+    private Servo servo02;
 
     private double oldMotor01Power;
     private double oldMotor02Power;
@@ -77,19 +76,19 @@ public class TestDrive01 extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         // Yay! Git. :)
-        motor01  = hardwareMap.get(DcMotor.class, "motor1");
-        motor02 = hardwareMap.get(DcMotor.class, "motor2");
-        motor03 = hardwareMap.get(DcMotor.class, "motor3");
-        motor04 = hardwareMap.get(DcMotor.class, "motor4");
-        servo01 = hardwareMap.get(Servo.class,"servo1");
+        motorFL = hardwareMap.get(DcMotor.class, "FL");
+        motorFR = hardwareMap.get(DcMotor.class, "FR");
+        motorBL = hardwareMap.get(DcMotor.class, "BL");
+        motorBR = hardwareMap.get(DcMotor.class, "BR");
+//        servo01 = hardwareMap.get(Servo.class,"servo1");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        motor01.setDirection(DcMotor.Direction.REVERSE);
-        //motor02.setDirection(DcMotor.Direction.FORWARD);
-        motor03.setDirection(DcMotor.Direction.REVERSE);
-        //motor04.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.REVERSE);
+        //motorFR.setDirection(DcMotor.Direction.FORWARD);
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        //motorBR.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -105,30 +104,26 @@ public class TestDrive01 extends LinearOpMode {
 
             //if (lefty > rightx) {
             if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
-                motor01.setPower(lefty - leftx);
-                motor02.setPower(lefty + leftx);
-                motor03.setPower(lefty + leftx);
-                motor04.setPower(lefty - leftx);
-                //} if (lefty < rightx) {
-                motor01.setPower(rightx);
-                motor02.setPower(-rightx);
-                motor03.setPower(rightx);
-                motor04.setPower(-rightx);
-                oldMotor01Power = motor01.getPower();
-                oldMotor02Power = motor02.getPower();
-                oldMotor03Power = motor03.getPower();
-                oldMotor04Power = motor04.getPower();
+                motorFL.setPower(lefty - leftx - rightx);
+                motorFR.setPower(lefty + leftx + rightx);
+                motorBL.setPower(lefty + leftx - rightx);
+                motorBR.setPower(lefty - leftx + rightx);
+
+                oldMotor01Power = motorFL.getPower();
+                oldMotor02Power = motorFR.getPower();
+                oldMotor03Power = motorBL.getPower();
+                oldMotor04Power = motorBR.getPower();
             }
             if (gamepad1.right_bumper || gamepad1.left_bumper) {
-                motor01.setPower(-oldMotor01Power);
-                motor02.setPower(-oldMotor02Power);
-                motor03.setPower(-oldMotor03Power);
-                motor04.setPower(-oldMotor04Power);
+                motorFL.setPower(-oldMotor01Power);
+                motorFR.setPower(-oldMotor02Power);
+                motorBL.setPower(-oldMotor03Power);
+                motorBR.setPower(-oldMotor04Power);
                 sleep(100);
-                motor01.setPower(0);
-                motor02.setPower(0);
-                motor03.setPower(0);
-                motor04.setPower(0);
+                motorFL.setPower(0);
+                motorFR.setPower(0);
+                motorBL.setPower(0);
+                motorBR.setPower(0);
             }
             //}
         }
