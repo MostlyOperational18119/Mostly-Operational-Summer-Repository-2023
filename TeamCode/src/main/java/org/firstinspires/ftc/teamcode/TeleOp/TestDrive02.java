@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -51,8 +50,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TestDrive01", group="Linear Opmode")
-public class TestDrive01 extends LinearOpMode {
+@TeleOp(name="TestDrive02", group="Linear Opmode")
+public class TestDrive02 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -60,8 +59,8 @@ public class TestDrive01 extends LinearOpMode {
     private DcMotor motorFR;
     private DcMotor motorBL;
     private DcMotor motorBR;
-    private CRServo servo01;
-//    private Servo servo02;
+    private Servo servo01;
+    private Servo servo02;
 
     private double oldMotor01Power;
     private double oldMotor02Power;
@@ -81,7 +80,7 @@ public class TestDrive01 extends LinearOpMode {
         motorFR = hardwareMap.get(DcMotor.class, "FR");
         motorBL = hardwareMap.get(DcMotor.class, "BL");
         motorBR = hardwareMap.get(DcMotor.class, "BR");
-        servo01 = hardwareMap.get(CRServo.class,"crservo1");
+//        servo01 = hardwareMap.get(Servo.class,"servo1");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -93,7 +92,6 @@ public class TestDrive01 extends LinearOpMode {
         //motorBR.setDirection(DcMotor.Direction.FORWARD);
 
         double speedDiv = 2.5;
-        boolean servoActive = false;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -104,7 +102,6 @@ public class TestDrive01 extends LinearOpMode {
             double leftx = -gamepad1.left_stick_x;
             double righty = -gamepad1.right_stick_y;
             double rightx = -gamepad1.right_stick_x;
-
             //servo01.setDirection();
 
             //if (lefty > rightx) {
@@ -119,7 +116,7 @@ public class TestDrive01 extends LinearOpMode {
                 oldMotor03Power = motorBL.getPower();
                 oldMotor04Power = motorBR.getPower();
             }
-            if (gamepad1.right_bumper || gamepad1.left_bumper) {
+            if ((gamepad1.right_bumper && !gamepad1.left_bumper)||(!gamepad1.right_bumper && gamepad1.left_bumper)) {
                 motorFL.setPower(-oldMotor01Power);
                 motorFR.setPower(-oldMotor02Power);
                 motorBL.setPower(-oldMotor03Power);
@@ -130,16 +127,10 @@ public class TestDrive01 extends LinearOpMode {
                 motorBL.setPower(0);
                 motorBR.setPower(0);
             }
-
-            if (gamepad1.a) {
-                if (servoActive) {
-                    servoActive = false;
-                    servo01.setPower(0);
-                } else if (!servoActive) {
-                    servoActive = true;
-                    servo01.setPower(1);
-                }
-                sleep(400);
+            if (gamepad1.right_bumper && gamepad1.left_bumper){
+                speedDiv*=0.7;
+            }else{
+                speedDiv=2.5;
             }
             //}
         }
