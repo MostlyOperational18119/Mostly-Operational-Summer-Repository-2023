@@ -65,14 +65,15 @@ public class TestAuto01 extends LinearOpMode {
         Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d(0 ,0, Math.toRadians(0)))
 //                .strafeRight(10)
 //                .forward(5)
-                .strafeRight(10)
-                .forward(5)
-                .splineTo(new Vector2d(12,20),Math.toRadians(90))
-                .forward(5)
-                .splineTo(new Vector2d(0,38),Math.toRadians(180))
-                .splineTo(new Vector2d(-12,20),Math.toRadians(-90))
-                .forward(10)
-                .splineTo(new Vector2d(0,-10),Math.toRadians(0))
+//                .strafeRight(10)
+//                .forward(5)
+//                .splineTo(new Vector2d(12,20),Math.toRadians(90))
+//                .forward(5)
+//                .splineTo(new Vector2d(0,38),Math.toRadians(180))
+//                .splineTo(new Vector2d(-12,20),Math.toRadians(-90))
+//                .forward(10)
+//                .splineTo(new Vector2d(0,-10),Math.toRadians(0))
+                .strafeRight(69)
                 .build();
 
         // Tell the User the Robot has been initialized

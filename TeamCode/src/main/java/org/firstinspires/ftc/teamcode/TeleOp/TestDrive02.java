@@ -32,7 +32,9 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -55,12 +57,14 @@ public class TestDrive02 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor motorFL;
-    private DcMotor motorFR;
-    private DcMotor motorBL;
-    private DcMotor motorBR;
-    private Servo servo01;
-    private Servo servo02;
+    private DcMotorEx motorFL;
+    private DcMotorEx motorFR;
+    private DcMotorEx motorBL;
+    private DcMotorEx motorBR;
+        private CRServo servo01;
+//    private Servo servo01;
+//    private Servo servo02;
+//    private Servo servo03;
 
     private double oldMotor01Power;
     private double oldMotor02Power;
@@ -76,11 +80,14 @@ public class TestDrive02 extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         // Yay! Git. :)
-        motorFL = hardwareMap.get(DcMotor.class, "FL");
-        motorFR = hardwareMap.get(DcMotor.class, "FR");
-        motorBL = hardwareMap.get(DcMotor.class, "BL");
-        motorBR = hardwareMap.get(DcMotor.class, "BR");
-//        servo01 = hardwareMap.get(Servo.class,"servo1");
+        motorFL = hardwareMap.get(DcMotorEx.class, "FL");
+        motorFR = hardwareMap.get(DcMotorEx.class, "FR");
+        motorBL = hardwareMap.get(DcMotorEx.class, "BL");
+        motorBR = hardwareMap.get(DcMotorEx.class, "BR");
+        servo01 = hardwareMap.get(CRServo.class,"crservo1");
+//        servo01 = hardwareMap.get(Servo.class, "servo01");
+//        servo02 = hardwareMap.get(Servo.class, "servo02");
+//        servo03 = hardwareMap.get(Servo.class, "servo03");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -91,7 +98,8 @@ public class TestDrive02 extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.REVERSE);
         //motorBR.setDirection(DcMotor.Direction.FORWARD);
 
-        double speedDiv = 2.5;
+        double speedDiv = 1.0;
+        boolean servoActive = false;
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -102,9 +110,11 @@ public class TestDrive02 extends LinearOpMode {
             double leftx = -gamepad1.left_stick_x;
             double righty = -gamepad1.right_stick_y;
             double rightx = -gamepad1.right_stick_x;
+
             //servo01.setDirection();
 
             //if (lefty > rightx) {
+            // Main drive code.
             if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
                 motorFL.setPower((lefty - leftx - rightx) / speedDiv);
                 motorFR.setPower((lefty + leftx + rightx) / speedDiv);
@@ -116,7 +126,7 @@ public class TestDrive02 extends LinearOpMode {
                 oldMotor03Power = motorBL.getPower();
                 oldMotor04Power = motorBR.getPower();
             }
-            if ((gamepad1.right_bumper && !gamepad1.left_bumper)||(!gamepad1.right_bumper && gamepad1.left_bumper)) {
+            if (gamepad1.right_bumper || gamepad1.left_bumper) {
                 motorFL.setPower(-oldMotor01Power);
                 motorFR.setPower(-oldMotor02Power);
                 motorBL.setPower(-oldMotor03Power);
@@ -127,11 +137,25 @@ public class TestDrive02 extends LinearOpMode {
                 motorBL.setPower(0);
                 motorBR.setPower(0);
             }
-            if (gamepad1.right_bumper && gamepad1.left_bumper){
-                speedDiv*=0.7;
-            }else{
-                speedDiv=2.5;
+
+//            if (gamepad1.dpad_up) {
+//              sleep(400);
+//              servo01.setPosition(0);
+//            } if(gamepad1.dpad_down) {
+//                sleep(400);
+//                servo01.setPosition(0.5);
+//            }
+            if (gamepad1.a) {
+                if (servoActive) {
+                    servoActive = false;
+                    servo01.setPower(0);
+                } else if (!servoActive) {
+                    servoActive = true;
+                    servo01.setPower(1);
+                }
+                sleep(400);
             }
+
             //}
         }
     }
