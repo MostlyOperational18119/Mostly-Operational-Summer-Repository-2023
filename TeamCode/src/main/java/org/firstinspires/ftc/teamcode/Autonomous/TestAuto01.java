@@ -62,18 +62,9 @@ public class TestAuto01 extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         // Setup up the trajectory (drive path)
-        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d(0 ,0, Math.toRadians(0)))
-//                .strafeRight(10)
-//                .forward(5)
-//                .strafeRight(10)
-//                .forward(5)
-//                .splineTo(new Vector2d(12,20),Math.toRadians(90))
-//                .forward(5)
-//                .splineTo(new Vector2d(0,38),Math.toRadians(180))
-//                .splineTo(new Vector2d(-12,20),Math.toRadians(-90))
-//                .forward(10)
-//                .splineTo(new Vector2d(0,-10),Math.toRadians(0))
-                .strafeRight(69)
+        Trajectory traj1 = drive.trajectoryBuilder(new Pose2d(0 ,0, Math.toRadians(90)))
+                .strafeRight(24)
+                .splineToSplineHeading(new Pose2d(0,-24,0), Math.toRadians(180))
                 .build();
 
         // Tell the User the Robot has been initialized
@@ -83,12 +74,24 @@ public class TestAuto01 extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        telemetry.addLine("started");
+        telemetry.update();
 
         if(isStopRequested()) return;
 
+        telemetry.addLine("not stopped");
+        telemetry.update();
 
 
-        drive.followTrajectory(myTrajectory);
+
+        drive.followTrajectoryAsync(traj1);
+        while (opModeIsActive() && !isStopRequested()) {
+            drive.update();
+        }
+
+        telemetry.addLine("tried to run code");
+        telemetry.update();
+        sleep(1000);
 
         Pose2d pose = drive.getPoseEstimate();
 
