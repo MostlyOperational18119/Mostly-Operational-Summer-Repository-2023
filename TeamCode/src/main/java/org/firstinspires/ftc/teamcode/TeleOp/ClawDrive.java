@@ -61,9 +61,9 @@ public class ClawDrive extends LinearOpMode {
     private DcMotorEx motorFR;
     private DcMotorEx motorBL;
     private DcMotorEx motorBR;
-        private Servo servoClaw;
+    private Servo servoClaw;
 
-        private Servo servoRotation;
+    private Servo servoRotation;
 //    private Servo servo01;
 //    private Servo servo02;
 //    private Servo servo03;
@@ -160,12 +160,11 @@ public class ClawDrive extends LinearOpMode {
                 sleep(400);
             }
 
-            if (gamepad1.b) { //bad james code
+            if (gamepad1.b) { 
                 if (servoActive == false) {
                     servoActive2 = true;
                     servoRotation.setPosition(0);
-                }
-                if (servoActive2 == true) {
+                } else if (servoActive2 == true) {
                     servoActive2 = false;
                     servoRotation.setPosition(-0.1);
                 }
