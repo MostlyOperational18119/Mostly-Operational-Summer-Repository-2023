@@ -81,7 +81,6 @@ public class ClawDrive extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        // Yay! Git. :)
         motorFL = hardwareMap.get(DcMotorEx.class, "FL");
         motorFR = hardwareMap.get(DcMotorEx.class, "FR");
         motorBL = hardwareMap.get(DcMotorEx.class, "BL");
@@ -101,9 +100,11 @@ public class ClawDrive extends LinearOpMode {
         //motorBL.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
 
+        // Init drive variables
         double speedDiv = 1.0;
         boolean servoActive = false;
         boolean servoActive2 = false;
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -115,9 +116,6 @@ public class ClawDrive extends LinearOpMode {
             double righty = -gamepad1.right_stick_y;
             double rightx = -gamepad1.right_stick_x;
 
-            //servo01.setDirection();
-
-            //if (lefty > rightx) {
             // Main drive code.
             if (!gamepad1.right_bumper && !gamepad1.left_bumper) {
                 motorFL.setPower((lefty - leftx - rightx) / speedDiv);
@@ -142,13 +140,6 @@ public class ClawDrive extends LinearOpMode {
                 motorBR.setPower(0);
             }
 
-//            if (gamepad1.dpad_up) {
-//              sleep(400);
-//              servo01.setPosition(0);
-//            } if(gamepad1.dpad_down) {
-//                sleep(400);
-//                servo01.setPosition(0.5);
-//            }
             if (gamepad1.a) {
                 if (servoActive) {
                     servoActive = false;
@@ -160,18 +151,17 @@ public class ClawDrive extends LinearOpMode {
                 sleep(400);
             }
 
-            if (gamepad1.b) { 
-                if (servoActive == false) {
+            if (gamepad1.b) {
+                if (!servoActive2) {
                     servoActive2 = true;
                     servoRotation.setPosition(0);
-                } else if (servoActive2 == true) {
+                } else if (servoActive2) {
                     servoActive2 = false;
                     servoRotation.setPosition(-0.1);
                 }
                 sleep(400);
             }
 
-            //}
         }
     }
 }
