@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 //claw
-@TeleOp(name="DO NOT RUN", group="Linear Opmode")
+@TeleOp(name="ClawDrive", group="Linear Opmode")
 public class ClawDrive extends LinearOpMode {
 
     // Declare OpMode members.
@@ -104,6 +104,11 @@ public class ClawDrive extends LinearOpMode {
         double speedDiv = 1.0;
         boolean servoActive = false;
         boolean servoActive2 = false;
+        double servoClawClose = .125;
+        double servoClawOpen = .225;
+        double servoRotationOn = 0.0;
+        double servoRotationOff = 0.2;
+        int modifierthing = 0;
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -140,13 +145,56 @@ public class ClawDrive extends LinearOpMode {
                 motorBR.setPower(0);
             }
 
+            if (gamepad1.x) {
+                if (modifierthing!=3) {
+                    modifierthing++;
+                } else {
+                    modifierthing = 0;
+                }
+            }
+            if (gamepad1.dpad_down) {
+                switch(modifierthing) {
+                    case 0:
+                        servoClawClose -= 0.01;
+                        break;
+                    case 1:
+                        servoClawOpen -= 0.01;
+                        break;
+                    case 2:
+                        servoRotationOff -= 0.01;
+                        break;
+                    case 3:
+                        servoRotationOn -= 0.01;
+                        break;
+                }
+                sleep(200);
+            }
+
+            if (gamepad1.dpad_up) {
+                switch(modifierthing) {
+                    case 0:
+                        servoClawClose += 0.01;
+                        break;
+                    case 1:
+                        servoClawOpen += 0.01;
+                        break;
+                    case 2:
+                        servoRotationOff += 0.01;
+                        break;
+                    case 3:
+                        servoRotationOn += 0.01;
+                        break;
+                }
+                sleep(200);
+            }
+
             if (gamepad1.a) {
                 if (servoActive) {
                     servoActive = false;
-                    servoClaw.setPosition(0.55);
+                    servoClaw.setPosition(servoClawClose);
                 } else {
                     servoActive = true;
-                    servoClaw.setPosition(0.25);
+                    servoClaw.setPosition(servoClawOpen);
                 }
                 sleep(400);
             }
@@ -154,13 +202,19 @@ public class ClawDrive extends LinearOpMode {
             if (gamepad1.b) {
                 if (!servoActive2) {
                     servoActive2 = true;
-                    servoRotation.setPosition(0);
+                    servoRotation.setPosition(servoRotationOn);
                 } else if (servoActive2) {
                     servoActive2 = false;
-                    servoRotation.setPosition(-0.1);
+                    servoRotation.setPosition(servoRotationOff);
                 }
                 sleep(400);
             }
+            telemetry.addData("servoClawOpen", servoClawOpen);
+            telemetry.addData("servoClawClose", servoClawClose);
+            telemetry.addData("servoRotationOn", servoRotationOn);
+            telemetry.addData("servoRotationOff", servoRotationOff);
+            telemetry.addData("mode", modifierthing);
+            telemetry.update();
 
         }
     }
