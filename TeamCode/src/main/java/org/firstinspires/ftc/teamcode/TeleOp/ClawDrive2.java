@@ -31,12 +31,12 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.Random;
 
 
 /**
@@ -52,8 +52,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 //claw
-@TeleOp(name="ClawDrive", group="Linear Opmode")
-public class ClawDrive extends LinearOpMode {
+@TeleOp(name="ClawDrive2", group="Linear Opmode")
+public class ClawDrive2 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -104,10 +104,12 @@ public class ClawDrive extends LinearOpMode {
         double speedDiv = 1.0;
         boolean servoActive = false;
         boolean servoActive2 = false;
-        double servoClawClose = .8;
-        double servoClawOpen = .46;
-        double servoRotationOn = 0.0;
-        double servoRotationOff = 0.2;
+        Random rand = new Random();
+        double clawRotation = (((rand.nextDouble()) * 2) - 1);
+//        double servoClawClose = .125;
+//        double servoClawOpen = .225;
+//        double servoRotationOn = 0.0;
+//        double servoRotationOff = 0.2;
         int modifierthing = 0;
 
         // Wait for the game to start (driver presses PLAY)
@@ -145,78 +147,19 @@ public class ClawDrive extends LinearOpMode {
                 motorBR.setPower(0);
             }
 
-            if (gamepad1.x) {
-                if (modifierthing!=3) {
-                    modifierthing++;
-                } else {
-                    modifierthing = 0;
-                }
+            if (gamepad1.dpad_up) {
+                clawRotation += 0.01;
                 sleep(400);
             }
             if (gamepad1.dpad_down) {
-                switch(modifierthing) {
-                    case 0:
-                        servoClawClose -= 0.01;
-                        break;
-                    case 1:
-                        servoClawOpen -= 0.01;
-                        break;
-                    case 2:
-                        servoRotationOff -= 0.01;
-                        break;
-                    case 3:
-                        servoRotationOn -= 0.01;
-                        break;
-                }
-                sleep(200);
-            }
-
-            if (gamepad1.dpad_up) {
-                switch(modifierthing) {
-                    case 0:
-                        servoClawClose += 0.01;
-                        break;
-                    case 1:
-                        servoClawOpen += 0.01;
-                        break;
-                    case 2:
-                        servoRotationOff += 0.01;
-                        break;
-                    case 3:
-                        servoRotationOn += 0.01;
-                        break;
-                }
-                sleep(200);
-            }
-
-            if (gamepad1.a) {
-                if (servoActive) {
-                    servoActive = false;
-                    servoClaw.setPosition(servoClawClose);
-                } else {
-                    servoActive = true;
-                    servoClaw.setPosition(servoClawOpen);
-                }
+                clawRotation -= 0.01;
                 sleep(400);
             }
 
-            if (gamepad1.b) {
-                if (!servoActive2) {
-                    servoActive2 = true;
-                    servoRotation.setPosition(servoRotationOn);
-                } else if (servoActive2) {
-                    servoActive2 = false;
-                    servoRotation.setPosition(servoRotationOff);
-                }
-                sleep(400);
-            }
-            telemetry.addData("servoClawOpen", servoClawOpen);
-            telemetry.addData("servoClawClose", servoClawClose);
-            telemetry.addData("servoRotationOn", servoRotationOn);
-            telemetry.addData("servoRotationOff", servoRotationOff);
-            telemetry.addData("mode", modifierthing);
+            servoClaw.setPosition(clawRotation);
+
+            telemetry.addData("Current pos nerd", clawRotation);
             telemetry.update();
-
         }
     }
 }
