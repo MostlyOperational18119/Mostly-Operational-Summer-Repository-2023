@@ -104,10 +104,10 @@ public class ClawDrive extends LinearOpMode {
         double speedDiv = 3.5;
         boolean servoActive = false;
         boolean servoActive2 = false;
-        double servoClawClose = .73;
+        double servoClawClose = .75;
         double servoClawOpen = .5;
         double servoRotationOn = 0.8;
-        double servoRotationOff = 0.96 ;
+        double servoRotationOff = 0.98;
         int modifierthing = 0;
 
         // Wait for the game to start (driver presses PLAY)
