@@ -101,13 +101,13 @@ public class ClawDrive extends LinearOpMode {
         motorBR.setDirection(DcMotor.Direction.REVERSE);
 
         // Init drive variables
-        double speedDiv = 1.0;
+        double speedDiv = 3.5;
         boolean servoActive = false;
         boolean servoActive2 = false;
-        double servoClawClose = .8;
-        double servoClawOpen = .46;
-        double servoRotationOn = 0.0;
-        double servoRotationOff = 0.2;
+        double servoClawClose = .75;
+        double servoClawOpen = .5;
+        double servoRotationOn = 0.8;
+        double servoRotationOff = 0.98;
         int modifierthing = 0;
 
         // Wait for the game to start (driver presses PLAY)
