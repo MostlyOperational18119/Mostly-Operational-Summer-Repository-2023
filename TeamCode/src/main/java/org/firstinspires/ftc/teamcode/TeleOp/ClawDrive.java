@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 //claw
-@TeleOp(name="ClawDrive", group="Linear Opmode")
+@TeleOp(name="2ServoClawDrive", group="Farmer Market")
 public class ClawDrive extends LinearOpMode {
 
     // Declare OpMode members.
