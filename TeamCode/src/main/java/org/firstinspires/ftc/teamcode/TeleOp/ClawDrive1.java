@@ -29,15 +29,12 @@
 
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import java.util.Random;
 
 
 /**
@@ -53,9 +50,8 @@ import java.util.Random;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 //claw
-@Disabled
-@TeleOp(name="ClawDrive2", group="Farmer Market")
-public class ClawDrive2 extends LinearOpMode {
+@TeleOp(name="1ServoClawDrive", group="Farmer Market")
+public class ClawDrive1 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -64,11 +60,6 @@ public class ClawDrive2 extends LinearOpMode {
     private DcMotorEx motorBL;
     private DcMotorEx motorBR;
     private Servo servoClaw;
-
-    private Servo servoRotation;
-//    private Servo servo01;
-//    private Servo servo02;
-//    private Servo servo03;
 
     private double oldMotor01Power;
     private double oldMotor02Power;
@@ -88,35 +79,26 @@ public class ClawDrive2 extends LinearOpMode {
         motorBL = hardwareMap.get(DcMotorEx.class, "BL");
         motorBR = hardwareMap.get(DcMotorEx.class, "BR");
         servoClaw = hardwareMap.get(Servo.class,"servoClaw");
-        servoRotation = hardwareMap.get(Servo.class, "servoRotation");
-//        servo01 = hardwareMap.get(Servo.class, "servo01");
-//        servo02 = hardwareMap.get(Servo.class, "servo02");
-//        servo03 = hardwareMap.get(Servo.class, "servo03");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        motorFL.setDirection(DcMotor.Direction.REVERSE);
-        //motorFR.setDirection(DcMotor.Direction.REVERSE);
-        //motorFR.setDirection(DcMotor.Direction.FORWARD);
-        //motorBL.setDirection(DcMotor.Direction.REVERSE);
-        motorBR.setDirection(DcMotor.Direction.REVERSE);
+//        motorFL.setDirection(DcMotor.Direction.REVERSE);
+//        motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
+//        motorBR.setDirection(DcMotor.Direction.REVERSE);
 
         // Init drive variables
-        double speedDiv = 1.0;
-        boolean servoActive = false;
-        boolean servoActive2 = false;
-        Random rand = new Random();
-        double clawRotation = (((rand.nextDouble()) * 2) - 1);
-//        double servoClawClose = .125;
-//        double servoClawOpen = .225;
-//        double servoRotationOn = 0.0;
-//        double servoRotationOff = 0.2;
-        int modifierthing = 0;
+        double speedDiv = 3.5;
+        boolean servoActive = true;
+        double servoClawClose = .39;
+        double servoClawOpen = .0;
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        telemetry.update();
+        servoClaw.setPosition(servoClawOpen);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -149,19 +131,18 @@ public class ClawDrive2 extends LinearOpMode {
                 motorBR.setPower(0);
             }
 
-            if (gamepad1.dpad_up) {
-                clawRotation += 0.01;
-                sleep(400);
+            if (gamepad1.a) {
+                if (servoActive) {
+                    servoActive = false;
+                    servoClaw.setPosition(servoClawClose);
+                } else {
+                    servoActive = true;
+                    servoClaw.setPosition(servoClawOpen);
+                }
+                while (gamepad1.a) {
+                    sleep(100);
+                }
             }
-            if (gamepad1.dpad_down) {
-                clawRotation -= 0.01;
-                sleep(400);
-            }
-
-            servoClaw.setPosition(clawRotation);
-
-            telemetry.addData("Current pos nerd", clawRotation);
-            telemetry.update();
         }
     }
 }
