@@ -22,7 +22,7 @@ public class AprilTagTest1 extends LinearOpMode {
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam1"));
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         builder.addProcessor(aprilTag);
 
@@ -48,8 +48,9 @@ public class AprilTagTest1 extends LinearOpMode {
                     telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                     telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
                 }
-                telemetry.update();
             }
+            telemetry.addLine("Hello, World!");
+            telemetry.update();
         }
     }
 }
